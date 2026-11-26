@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Unit tests for the parts of the plugin that do not touch the game: reading the casting and bank files, and
+       the rules for dealing voices, picking lines and matching callsign versions. They compile the plugin's own
+       source files (Data/ and Logic/), so they need neither the game nor Unity installed.
+       Run: dotnet test   (in this folder) -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>XwvmChatter.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\XwvmChatter\Data\ChatterConfig.cs" Link="Plugin\Data\ChatterConfig.cs" />
+    <Compile Include="..\XwvmChatter\Data\CallsignMap.cs" Link="Plugin\Data\CallsignMap.cs" />
+    <Compile Include="..\XwvmChatter\Logic\*.cs" Link="Plugin\Logic\%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+</Project>

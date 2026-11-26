@@ -1,0 +1,15 @@
+plugin/**/bin/
+plugin/**/obj/
+*.user
+.vs/
+__pycache__/
+
+pipeline/.env
+pipeline/.venv/
+pipeline/raw/
+pipeline/build/
+pipeline/beds/
+pipeline/sfx/
+
+# what the pipeline builds: your voices
+content/

@@ -1,0 +1,4 @@
+# The officer of any mission that has none of its own (custom missions, anything outside config/tours.yaml).
+# exclude_situations: calls this officer never makes there.
+officer: Mira Kessel
+exclude_situations: [MCCAttacked, MCCShieldsDown, MCCHullCritical, MCCDestroyed]

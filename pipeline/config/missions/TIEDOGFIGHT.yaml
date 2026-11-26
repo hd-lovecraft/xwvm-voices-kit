@@ -1,0 +1,8 @@
+# One file like this per mission you cast. The mission file itself (TIEDOGFIGHT.XWI) is yours to make.
+# A fighter seat that is not listed here takes a voice from the generic pool in flight.
+mission: TIEDOGFIGHT
+commander: null   # the tour's officer (config/tours.yaml), or a voice name to override
+cast:
+  Red 2: Iris Calder
+  Red 3: Jon Marek
+sandbox: true     # a test mission: written to sandbox.xml, never to casting.xml

@@ -1,0 +1,7 @@
+# Your voices, by the name you cast them under. A voice's clips live in content/xwing/VOICE/_chatter/<name as a slug>/.
+# The names here are made up. Add whatever else your own recording step needs under each voice; the build ignores it.
+voices:
+  Iris Calder: {}
+  Jon Marek: {}
+  Mira Kessel:
+    generic: true     # in the pool for wingmen no mission casts

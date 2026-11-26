@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>XwvmChatter</AssemblyName>
+    <RootNamespace>XwvmChatter</RootNamespace>
+    <!-- Release: no debug symbols and a mapped source path, so the DLL carries no path from the build machine. -->
+    <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
+    <PathMap>$(MSBuildProjectDirectory)=XwvmChatter</PathMap>
+    <!-- The release number, and the only place it is written. Plugin.Version (what BepInEx prints in the game log)
+         is generated from it below. Bump it when starting the next release; a Debug build logs "<version>-dev". -->
+    <Version>0.7.2</Version>
+    <LoggedVersionSuffix Condition="'$(Configuration)' == 'Debug'">-dev</LoggedVersionSuffix>
+    <!-- Optional: extra source files for a private debug build. Debug only; a Release build never compiles them. -->
+    <ChatterExtraSources Condition="'$(ChatterExtraSources)' == ''"></ChatterExtraSources>
+    <UseExtraSources Condition="'$(Configuration)' == 'Debug' And '$(ChatterExtraSources)' != ''">true</UseExtraSources>
+    <DefineConstants Condition="'$(UseExtraSources)' == 'true'">$(DefineConstants);DEV</DefineConstants>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\XWVM</GamePath>
+    <Managed>$(GamePath)\xwvm_Data\Managed</Managed>
+    <BepCore>$(GamePath)\BepInEx\core</BepCore>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>CS1591;MSB3277</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="XwvmModableAssets"><HintPath>$(Managed)\XwvmModableAssets.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="XwvmCommon"><HintPath>$(Managed)\XwvmCommon.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(Managed)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AudioModule"><HintPath>$(Managed)\UnityEngine.AudioModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule"><HintPath>$(Managed)\UnityEngine.UnityWebRequestModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule"><HintPath>$(Managed)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.InputSystem"><HintPath>$(Managed)\Unity.InputSystem.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Xml.Linq"><HintPath>$(Managed)\System.Xml.Linq.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The plugin's own Ogg decoder: NVorbis (MIT) is compiled against and embedded in XwvmChatter.dll
+         (OggDirect.InstallResolver loads it from the resource), so the release stays one DLL with nothing next to it. -->
+    <PackageReference Include="NVorbis" Version="0.8.6" GeneratePathProperty="true" PrivateAssets="all" />
+    <EmbeddedResource Include="$(PkgNVorbis)/lib/netstandard2.0/NVorbis.dll" LogicalName="NVorbis.dll" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseExtraSources)' == 'true'">
+    <Compile Include="$(ChatterExtraSources)\**\*.cs" Exclude="$(ChatterExtraSources)\**\bin\**;$(ChatterExtraSources)\**\obj\**" />
+  </ItemGroup>
+
+  <!-- BuildInfo.Version = $(Version), as a compile-time constant (the [BepInPlugin] attribute needs one).
+       BuildInfo.LoggedVersion is what the "loaded" log line prints: the same, with "-dev" added in a Debug build. -->
+  <Target Name="WriteBuildInfo" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <BuildInfoFile>$(IntermediateOutputPath)BuildInfo.g.cs</BuildInfoFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(BuildInfoFile)" Overwrite="true" WriteOnlyWhenDifferent="true"
+                      Lines="namespace XwvmChatter { internal static class BuildInfo { public const string Version = &quot;$(Version)&quot;%3B public const string LoggedVersion = &quot;$(Version)$(LoggedVersionSuffix)&quot;%3B } }" />
+    <ItemGroup>
+      <Compile Include="$(BuildInfoFile)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Debug builds only: a Debug build copies itself into the game for testing; a Release build is never copied anywhere. -->
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug' And Exists('$(GamePath)\BepInEx\plugins')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins" />
+    <Message Importance="high" Text="Deployed $(AssemblyName).dll to $(GamePath)\BepInEx\plugins" />
+  </Target>
+</Project>

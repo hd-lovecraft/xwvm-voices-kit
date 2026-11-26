@@ -1,0 +1,5 @@
+# The plain radio treatment (src/radio.py). Leave a line out to keep its default.
+lowcut_hz: 350      # nothing below this
+highcut_hz: 3400    # nothing above this
+drive: 4.0          # grit: how hard the voice is pushed into the soft clipper; 1 = clean
+level_dbfs: -20.0   # level of the treated voice before the static goes under it

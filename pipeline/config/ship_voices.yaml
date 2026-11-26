@@ -1,0 +1,6 @@
+# Named friendly ships that talk on the radio, one fixed voice per ship. The key is the ship's flight-group name in
+# the mission file, written with capitals as a name ('LIBERTY' -> Liberty); `per_mission` is optional.
+#   ships:
+#     Liberty: {voice: Mira Kessel}
+#     Hope: {voice: Jon Marek, per_mission: {TIEDOGFIGHT: Iris Calder}}
+ships: {}

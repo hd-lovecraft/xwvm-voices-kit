@@ -1,0 +1,8 @@
+# Tour -> flight officer (the voice that makes the mission-status calls) and the tour's mission files.
+# variants: another file of a listed mission, as `VARIANT: LISTED`; it takes that mission's officer.
+tours:
+- tour: Example tour
+  officer: Mira Kessel
+  missions:
+  - TIEDOGFIGHT
+variants: {}
